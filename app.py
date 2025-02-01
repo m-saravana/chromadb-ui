@@ -98,34 +98,21 @@ def display_documents(collection):
     result = collection.get()
     
     if result and result['documents']:
-        # Create a list of dictionaries for the dataframe
-        docs_data = []
+        st.markdown("### Documents")
+        
+        # Display documents in an expandable format
         for id, doc, metadata in zip(result['ids'], result['documents'], result['metadatas']):
-            docs_data.append({
-                "ID": id,
-                "Document": doc,
-                "Metadata": str(metadata)
-            })
-        
-        # Create columns for the table header
-        col1, col2, col3 = st.columns([1, 3, 2])
-        with col1:
-            st.markdown("**ID**")
-        with col2:
-            st.markdown("**Document**")
-        with col3:
-            st.markdown("**Metadata**")
-        
-        # Display documents in a table-like format
-        for doc in docs_data:
-            col1, col2, col3 = st.columns([1, 3, 2])
-            with col1:
-                st.text(doc["ID"][:8] + "...")
-            with col2:
-                st.text(doc["Document"][:50] + "..." if len(doc["Document"]) > 50 else doc["Document"])
-            with col3:
-                st.text(doc["Metadata"])
-            st.markdown("---")  # Add separator between rows
+            with st.expander(f"Document: {id}"):
+                st.markdown("**ID:**")
+                st.code(id)  # Using code block for better ID visibility
+                
+                st.markdown("**Content:**")
+                st.text_area("", value=doc, height=150, disabled=True)  # Using text_area for scrollable content
+                
+                st.markdown("**Metadata:**")
+                st.json(metadata)  # Pretty print metadata as JSON
+                
+                st.markdown("---")
     else:
         st.info("No documents in this collection")
 
